@@ -1,0 +1,8 @@
+POST http://localhost:8080/op/healthy
+
+###
+GET  http://localhost:8080/op/healthy
+
+###
+POST http://localhost:8080/op/register
+
