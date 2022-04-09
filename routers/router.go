@@ -13,11 +13,10 @@ import (
 )
 
 func init() {
-	//健康检查
-	beego.Router("/op/healthy",&controllers.Provider{})
-	//rp注册
-	beego.Router("/op/register",&controllers.Provider{},"Post:RegisterOp")
-	//授权
-	// beego.Router("/op/register",&controllers.Provider{},"Post:RegisterOp")
-	//授权
+	//Authorize api
+	beego.Router("/op/authorize",&controllers.Authorize{},"Get:Authorize")
+	//token api
+	//beego.Router("/op/token",&controllers.Provider{},"Post:token")
+	//userInfo api
+	//beego.Router("/op/userInfo",&controllers.Provider{},"Post:userInfo")
 }

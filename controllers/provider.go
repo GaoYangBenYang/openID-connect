@@ -1,37 +1,80 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-	"openid_connect_op/models"
+	"fmt"
+	"net/http"
+
+	"github.com/coreos/go-oidc"
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
 )
 
-type Provider struct {
-	beego.Controller
-}
+var (
+	clientID     = "app1"
+	clientSecret = "ZXhhbXBsZS1hcHAtc2VjcmV0"
+	redirectURL = "http://localhost:8081/rpa/callback"
+)
 
-func (u *Provider) Get() {
-	u.Data["json"] = models.Response{
-		Code:    "404",
-		Message: "请求方法异常",
-		Data:    nil,
-	}
-	u.ServeJSON()
-}
+func init(){
+	ctx := context.Background()
+	//"/.well-known/openid-configuration"
+	provider,err := oidc.NewProvider(ctx, "http://localhost:8080")
 
-func (u *Provider) Post() {
-	u.Data["json"]=models.Response{
-		Code:    "200",
-		Message: "Healthy",
-		Data:    nil,
+	if err != nil {
+		// 错误处理
+		fmt.Println("错误信息")
 	}
-	u.ServeJSON()
-}
+	// // 配置OpenID Connect Aware OAuth2客户端
+	oauth2Config := oauth2.Config{
+    ClientID:     clientID,
+    ClientSecret: clientSecret,
+    RedirectURL:  redirectURL,
+    // Discovey返回OAuth2端点
+	//TODO 程序异常
+    Endpoint: provider.Endpoint(),
+    // “OpenID”是OpenID Connect流程所需的范围。
+    Scopes: []string{oidc.ScopeOpenID, "profile"},
+	}
 
-func (u *Provider) RegisterOp()  {
-	u.Data["json"] = models.Response{
-		Code:    "200",
-		Message: "注册成功",
-		Data:    nil,
-	}
-	u.ServeJSON()
+	//在响应时，提供程序可用于验证 ID 令牌。
+	var verifier = provider.Verifier(&oidc.Config{ClientID: clientID})
+	state:="test"
+	// OAuth2 重定向保持不变。
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, oauth2Config.AuthCodeURL(state), http.StatusFound)
+	})
+
+	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		// 验证状态和错误。
+
+		oauth2Token, err := oauth2Config.Exchange(ctx, r.URL.Query().Get("code"))
+		if err != nil {
+			// 错误处理
+			fmt.Println("错误信息")
+		}
+
+		// 从OAuth2令牌中提取ID令牌
+		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
+		if !ok {
+			// 处理缺少令牌
+			fmt.Println("错误信息")
+		}
+
+		// 解析并验证ID令牌有效载荷
+		idToken, err := verifier.Verify(ctx, rawIDToken)
+		if err != nil {
+			// handle error
+			fmt.Println("错误信息")
+		}
+
+		// Extract custom claims
+		var claims struct {
+			Email    string `json:"email"`
+			Verified bool   `json:"email_verified"`
+		}
+		if err := idToken.Claims(&claims); err != nil {
+			// handle error
+			fmt.Println("错误信息")
+		}
+	})
 }
