@@ -4,7 +4,10 @@ go 1.17
 
 require github.com/astaxie/beego v1.12.3
 
-require github.com/coreos/go-oidc/v3 v3.1.0
+require (
+	github.com/coreos/go-oidc/v3 v3.1.0
+	github.com/go-sql-driver/mysql v1.5.0
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -12,6 +15,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.33.0 // indirect

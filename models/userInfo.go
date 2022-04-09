@@ -1,9 +1,41 @@
 package models
 
+import (
+	"fmt"
+	"github.com/astaxie/beego/orm"
+)
+
 type UserInfo struct {
-	Subject       string `json:"sub"`
-	Profile       string `json:"profile"`
-	Email         string `json:"email"`
-	EmailVerified bool   `json:"email_verified"`
-	// contains filtered or unexported fields
+	Id int
+	UUID string
+	UserName string
+	Password string
+	Email string
+	MobileNumber int
+	IsViolation int
+}
+
+func GetUserInfoById(id int) (*UserInfo,error) {
+	sql := orm.NewOrm()
+	userInfo := UserInfo{
+		Id: id,
+	}
+	err := sql.Read(&userInfo)
+	if err != nil {
+		fmt.Println("查询失败",err)
+		return nil, err
+	}
+	return &userInfo,nil
+}
+
+func GetAllUserInfo() (*[]UserInfo,error) {
+	sql := orm.NewOrm()
+	var userInfoSlice []UserInfo
+	////返回影响行数以及错误信息
+	_, err := sql.Raw("select * from user_info").QueryRows(&userInfoSlice)
+	if err!=nil {
+		fmt.Println("查询失败",err)
+		return nil, err
+	}
+	return &userInfoSlice,nil
 }
