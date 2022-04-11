@@ -12,8 +12,13 @@ import (
 var (
 	clientID     = "app1"
 	clientSecret = "ZXhhbXBsZS1hcHAtc2VjcmV0"
-	redirectURL = "http://localhost:8081/rpa/callback"
+	redirectURL = "http://localhost:8081/login"
 )
+
+var endpotin = oauth2.Endpoint{
+	AuthURL:  "http://localhost:8080/authorize",
+	TokenURL: "http://localhost:8080/token",
+}
 
 func init(){
 	ctx := context.Background()
@@ -31,7 +36,7 @@ func init(){
     RedirectURL:  redirectURL,
     // Discovey返回OAuth2端点
 	//TODO 程序异常
-    Endpoint: provider.Endpoint(),
+    Endpoint: endpotin,
     // “OpenID”是OpenID Connect流程所需的范围。
     Scopes: []string{oidc.ScopeOpenID, "profile"},
 	}
@@ -52,21 +57,21 @@ func init(){
 			// 错误处理
 			fmt.Println("错误信息")
 		}
-
+		fmt.Printf("oauth2Token%s",oauth2Token)
 		// 从OAuth2令牌中提取ID令牌
 		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 		if !ok {
 			// 处理缺少令牌
 			fmt.Println("错误信息")
 		}
-
+		fmt.Printf("rawIDToken%s",rawIDToken)
 		// 解析并验证ID令牌有效载荷
 		idToken, err := verifier.Verify(ctx, rawIDToken)
 		if err != nil {
 			// handle error
 			fmt.Println("错误信息")
 		}
-
+		fmt.Printf("idToken%s",idToken)
 		// Extract custom claims
 		var claims struct {
 			Email    string `json:"email"`
