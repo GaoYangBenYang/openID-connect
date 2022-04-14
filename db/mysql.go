@@ -4,7 +4,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	//导入mysql驱动
 	_ "github.com/go-sql-driver/mysql"
-	"openid_connect_op/models"
+	"openid_connect/models"
 )
 
 func init() {

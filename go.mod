@@ -1,4 +1,4 @@
-module openid_connect_op
+module openid_connect
 
 go 1.17
 

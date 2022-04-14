@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	"fmt"
-	"openid_connect_op/models"
+	"openid_connect/models"
 
 	"github.com/astaxie/beego"
 )
@@ -18,15 +17,21 @@ func (a *Authorize) Authorize() {
 	scopes:=a.GetString("scope")
 	response_type:=a.GetString("response_type")
 	state:=a.GetString("state")
-	fmt.Println(clientID)
-	fmt.Println(redirectURL)
-	fmt.Println(scopes)
-	fmt.Println(response_type)
-	fmt.Println(state)
 	a.Data["json"] = models.Response{
 		Code:    "200",
-		Message: "授权成功",
-		Data:    nil,
+		Message: "Authorize",
+		Data:    []string{clientID,redirectURL,scopes,response_type,state},
+	}
+	a.ServeJSON()
+}
+
+func (a *Authorize) CallBack() {
+	code:=a.GetString("code")
+	state:=a.GetString("state")
+	a.Data["json"] = models.Response{
+		Code:    "200",
+		Message: "CallBack",
+		Data:    []string{code,state},
 	}
 	a.ServeJSON()
 }

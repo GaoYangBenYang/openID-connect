@@ -9,14 +9,19 @@ package routers
 
 import (
 	"github.com/astaxie/beego"
-	"openid_connect_op/controllers"
+	"openid_connect/controllers"
 )
 
 func init() {
+
+	
+	beego.Router("/.well-known/openid-configuration",&controllers.Authorize{},"Get:Authorize")
 	//Authorize api
 	beego.Router("/op/authorize",&controllers.Authorize{},"Get:Authorize")
-	//token api
-	//beego.Router("/op/token",&controllers.Provider{},"Post:token")
+	//认证请求响应
+	beego.Router("/op/callback",&controllers.Authorize{},"Get:CallBack")
+	//Token EndPoint
+	// beego.Router("/op/token",&controllers.Token{},"Post:token")
 	//userInfo api
 	//beego.Router("/op/userInfo",&controllers.Provider{},"Post:userInfo")
 }
