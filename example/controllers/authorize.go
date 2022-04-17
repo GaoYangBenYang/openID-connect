@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"openid_connect/example/models"
-
+	"net/http"
+	"text/template"
 	"github.com/astaxie/beego"
 )
 
@@ -12,26 +12,37 @@ type Authorize struct {
 }
 
 func (a *Authorize) Authorize() {
-	clientID:=a.GetString("client_id")
-	redirectURL:=a.GetString("redirect_uri")
-	scopes:=a.GetString("scope")
-	response_type:=a.GetString("response_type")
-	state:=a.GetString("state")
-	a.Data["json"] = models.Response{
-		Code:    "200",
-		Message: "Authorize",
-		Data:    []string{clientID,redirectURL,scopes,response_type,state},
-	}
-	a.ServeJSON()
+
 }
 
-func (a *Authorize) CallBack() {
-	code:=a.GetString("code")
-	state:=a.GetString("state")
-	a.Data["json"] = models.Response{
-		Code:    "200",
-		Message: "CallBack",
-		Data:    []string{code,state},
+func HandleLogin(w http.ResponseWriter, r *http.Request) {
+	tpl := `
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="UTF-8">
+			<title>Login</title>
+		</head>
+		<body>
+			<form method="POST" action="/login">
+				<input name="client"/>
+				<button type="submit">Login</button>
+			</form>
+		</body>
+	</html>`
+	t, err := template.New("login").Parse(tpl)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	a.ServeJSON()
+	err = t.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleCallback(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	client := r.FormValue("client")
+	http.Redirect(w, r, "/authorize/callback?id="+client, http.StatusFound)
 }
