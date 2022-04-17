@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"openid_connect/models"
+	"openid_connect/example/models"
 
 	"github.com/astaxie/beego"
 )
