@@ -7,7 +7,7 @@
   递给客户端，且可以适用于各种类型的客户端（比如服务端应用，移动APP，JS应用），
   且完全兼容OAuth2，也就是说你搭建了一个OIDC的服务后，也可以当作一个
   OAuth2的服务来用。应用场景如图：
-  ![OIDC授权码模式](conf\images\OIDC应用场景.png)
+  ![OIDC授权码模式](.\conf\images\OIDC应用场景.png)
 
   OIDC已经有很多的企业在使用，比如Google的账号认证授权体系，Microsoft的账号体系也部署了OIDC，
   当然这些企业有的也是OIDC背后的推动者。除了这些之外，有很多各个语言版本的开源服务端件，
@@ -25,7 +25,7 @@
   [Front-Channel Logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html)：可选。基于前端的注销机制，使得RP（这个缩写后面会解释）可以不使用OP的iframe来退出。
   [Back-Channel Logout](https://openid.net/specs/openid-connect-backchannel-1_0.html)：可选。基于后端的注销机制，定义了RP和OP直接如何通信来完成注销。
   除了上面这8个之外，还有其他的正在制定中的扩展。看起来是挺多的，不要被吓到，其实并不是很复杂，除了Core核心规范内容多一点之外，另外7个都是很简单且简短的规范，另外Core是基于OAuth2的，也就是说其中很多东西在复用OAuth2，所以说你理解了OAuth2之后，OIDC就是非常容易理解的了，我们这里就只关注OIDC引入了哪些新的东西（Core，其余7个可选规范不做介绍，但是可能会提及到）。千言万语都不如一张图，没图你说个***。
-  ![OIDC组成结构图](conf\images\OoenID_Connect_Protocol_Suite.png)
+  ![OIDC组成结构图](.\conf\images\OoenID_Connect_Protocol_Suite.png)
 
   上图是官方给出的一个OIDC组成结构图，我们暂时只关注Core的部分，其他的部分了解是什么东西就可以了，当作黑盒来用。
   就像当初的AJAX一样，它其实并不是一个新的技术，而是结合很多已有的技术，按照规范的方式组合起来，就是AJAX。
@@ -56,7 +56,7 @@ OP把ID Token和Access Token（需要的话）返回给RP；
 RP使用Access Token发送一个请求UserInfo EndPoint；
 UserInfo EndPoint返回EU的Claims。
 
-![OIDC流程](conf\images\OIDC流程.jpg)
+![OIDC流程](.\conf\images\OIDC流程.jpg)
 上图取自Core规范文档，其中AuthN=Authentication，表示认证；AuthZ=Authorization，代表授权。注意这里面RP发往OP的请求，是属于Authentication类型的请求，虽然在OIDC中是复用OAuth2的Authorization请求通道，但是用途是不一样的，且OIDC的AuthN请求中scope参数必须要有一个值为的openid的参数（后面会详细介绍AuthN请求所需的参数），用来区分这是一个OIDC的Authentication请求，而不是OAuth2的Authorization请求。
 
 ## 3.3 ID Token
@@ -97,7 +97,7 @@ Resource Owner Password Credentials Grant是需要用途提供账号密码给RP�
 Client Credentials Grant这种方式根本就不需要用户参与，更谈不上用户身份认证了。这也能反映授权和认证的差异，以及只使用OAuth2来做身份认证的事情是远远不够的，也是不合适的。
 
 ### 3.4.1 基于Authorization Code的认证请求
-![OIDC授权码模式](conf\images\OIDC授权码模式.jpg)
+![OIDC授权码模式](.\conf\images\OIDC授权码模式.jpg)
 这种方式使用OAuth2的Authorization Code的方式来完成用户身份认证，所有的Token都是通过Token EndPoint（OAuth2中定义：https://tools.ietf.org/html/rfc6749#section-3.2）来发放的。构建一个OIDC的Authentication Request需要提供如下的参数：
 
 scope：必须。OIDC的请求必须包含值为“openid”的scope的参数。
