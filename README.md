@@ -91,9 +91,7 @@ Authorization Code Flow：使用OAuth2的授权码来换取Id Token和Access Tok
 Implicit Flow：使用OAuth2的Implicit流程获取Id Token和Access Token。
 Hybrid Flow：混合Authorization Code Flow+Implici Flow。
 这里有个小问题大家可以思考下，OAuth2中还有基于Resource Owner Password Credentials Grant和Client Credentials Grant的方式来获取Access Token，为什么OIDC没有扩展这些方式呢？
-
-Resource Owner Password Credentials Grant是需要用途提供账号密码给RP的，账号密码给到RP了，还要什么自行车（ID Token）。。。
-
+Resource Owner Password Credentials Grant是需要用途提供账号密码给RP的，账号密码给到RP了，还要什么自行车（ID Token）
 Client Credentials Grant这种方式根本就不需要用户参与，更谈不上用户身份认证了。这也能反映授权和认证的差异，以及只使用OAuth2来做身份认证的事情是远远不够的，也是不合适的。
 
 ### 3.4.1 基于Authorization Code的认证请求
