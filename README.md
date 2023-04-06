@@ -11,7 +11,7 @@
 
   OIDC已经有很多的企业在使用，比如Google的账号认证授权体系，Microsoft的账号体系也部署了OIDC，
   当然这些企业有的也是OIDC背后的推动者。除了这些之外，有很多各个语言版本的开源服务端件，
-  客户端组件等等（http://openid.net/developers/certified/）；
+  客户端组件等等（http://openid.net/developers/certified/);
   理解OIDC的前提是需要理解OAuth2，这里假设大家都有OAuth2的基础.
 
 # 2 OIDC 协议族
@@ -194,5 +194,3 @@ OIDC兼容OAuth2，可以使用Access Token控制受保护的API资源。
 OIDC可以兼容众多的IDP作为OIDC的OP来使用。
 OIDC的一些敏感接口均强制要求TLS，除此之外，得益于JWT,JWS,JWE家族的安全机制，使得一些敏感信息可以进行数字签名、加密和验证，进一步确保整个认证过程中的安全保障。
 以上内容均是个人的一些理解，如果错误之处，欢迎指正！
-
-# SingleSignOn
