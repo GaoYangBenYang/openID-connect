@@ -9,7 +9,7 @@ package routers
 
 import (
 	"github.com/astaxie/beego"
-	"openid_connect/internal/controllers"
+	"OpenIDProvider/src/controllers"
 )
 
 func init() {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
-	_ "openid_connect/internal/routers"
+	_ "OpenIDProvider/src/routers"
 )
 
 func main() {

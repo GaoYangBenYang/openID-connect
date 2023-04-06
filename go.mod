@@ -1,4 +1,4 @@
-module openid_connect
+module OpenIDProvider
 
 go 1.17
 
