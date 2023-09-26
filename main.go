@@ -1,32 +1,52 @@
 package main
 
 import (
-	_ "OpenIDProvider/src/router"
-
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/plugins/cors"
+	"OpenIDProvider/internal/config"
+	"OpenIDProvider/internal/middleware/mysql"
+	"OpenIDProvider/internal/middleware/redis"
+	"OpenIDProvider/internal/router"
+	"log"
+	"net/http"
+	"time"
 )
 
+func init() {
+	//读取配置文件
+	config.InitConfig()
+	//注册MySQL
+	mysql.InitMySQLClient()
+	//注册Redis
+	redis.InitRedisClient()
+	//注册Kafka
+	
+	//注册中间件
+
+	//注册路由
+	router.InitRouter()
+}
 
 func main() {
-	if beego.BConfig.RunMode == "dev" {
-		beego.BConfig.WebConfig.DirectoryIndex = true
-		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	//监听端口
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			log.Println("进行健康检查...")
+			resp, err := http.Get("http://localhost:8000/health")
+			if err != nil {
+				log.Println("Failed:", err)
+				continue
+			}
+			resp.Body.Close()
+			if resp.StatusCode != http.StatusOK {
+				log.Println("Not OK:", resp.StatusCode)
+				continue
+			}
+			break
+		}
+		log.Println(config.Conf.Application.Name + "启动成功！正在监听" + config.Conf.Application.Port + "端口。")
+	}()
+	err := http.ListenAndServe(config.Conf.Application.Host+":"+config.Conf.Application.Port, nil)
+	if err != nil {
+		log.Println("ListenAndServe: ", err)
 	}
-		//CORS
-	//InsertFilter是提供一个过滤函数
-	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-		//允许访问所有源
-		AllowAllOrigins: true,
-		//可选参数"GET", "POST", "PUT", "DELETE", "OPTIONS" (*为所有)
-		//其中Options跨域复杂请求预检
-		AllowMethods: []string{"*"},
-		//指的是允许的Header的种类
-		AllowHeaders: []string{"*"},
-		//公开的HTTP标头列表
-		ExposeHeaders: []string{"Content-Length"},
-		//如果设置，则允许共享身份验证凭据，例如cookie
-		AllowCredentials: true,
-	}))
-	beego.Run("localhost")
 }

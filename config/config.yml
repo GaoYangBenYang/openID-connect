@@ -1,0 +1,26 @@
+Application:
+  Name: OpenIDProvider
+  Host: localhost
+  Port: 8000
+
+
+MySQL:
+  root: root
+  password: 123456
+  DBName: codefixer
+
+Redis:
+  Address: localhost:6379
+  Password: ""
+  DBName: 0
+
+Kafka:
+
+
+
+Log:
+
+
+OpenIDProvider:
+
+
