@@ -19,7 +19,7 @@ func init() {
 	redis.InitRedisClient()
 	//注册Kafka
 	
-	//注册中间件
+	//注册中间件(访问速率限制，访问处理时间，数据校验，log)
 
 	//注册路由
 	router.InitRouter()
@@ -30,7 +30,7 @@ func main() {
 	go func() {
 		for {
 			time.Sleep(time.Second)
-			log.Println("进行健康检查...")
+			log.Println("进行"+config.Conf.Application.Name+"服务健康检查...")
 			resp, err := http.Get("http://localhost:8000/health")
 			if err != nil {
 				log.Println("Failed:", err)

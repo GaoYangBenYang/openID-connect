@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"OpenIDProvider/internal/config"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -12,7 +13,7 @@ var MysqlDB *gorm.DB
 
 func InitMySQLClient() {
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN: "root:123456@tcp(127.0.0.1:3306)/codefixer?charset=utf8&parseTime=True&loc=Local", // DSN data source name
+		DSN: config.Conf.MySQL.UserName+":"+config.Conf.MySQL.Password+"@tcp("+config.Conf.MySQL.Address+")/"+config.Conf.MySQL.DBName+"?charset=utf8&parseTime=True&loc=Local", // DSN data source name
 	}), &gorm.Config{})
 	if err != nil {
 		log.Println("MySQL连接失败!", err)

@@ -5,8 +5,9 @@ Application:
 
 
 MySQL:
-  root: root
-  password: 123456
+  Address: localhost:3306
+  UserName: root
+  Password: 123456
   DBName: codefixer
 
 Redis:

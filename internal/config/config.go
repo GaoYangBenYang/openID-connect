@@ -37,8 +37,9 @@ type Application struct {
 }
 
 type MySQL struct {
-	Root     string `yaml:"root"`
-	Password string `yaml:"password"`
+	Address  string `yaml:"Address"`
+	UserName string `yaml:"UserName"`
+	Password string `yaml:"Password"`
 	DBName   string `yaml:"DBName"`
 }
 
