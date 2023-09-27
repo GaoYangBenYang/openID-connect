@@ -1,13 +1,13 @@
 package model
 
-type Message struct {
+type response struct {
 	Code    int
 	Message string
 	Data    interface{}
 }
 
-func NewMessage(code int, message string, data interface{}) *Message {
-	return &Message{
+func NewResponse(code int, message string, data interface{}) *response {
+	return &response{
 		Code:    code,
 		Message: message,
 		Data:    data,

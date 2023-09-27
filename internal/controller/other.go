@@ -8,7 +8,7 @@ import (
 )
 
 func Health(c *gin.Context) {
-	msg := model.NewMessage(http.StatusOK, "服务正常！", nil)
+	msg := model.NewResponse(http.StatusOK, "服务正常！", nil)
 
 	c.JSON(msg.Code, msg)
 }

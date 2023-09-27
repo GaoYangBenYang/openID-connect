@@ -11,5 +11,6 @@ func InitRouter(r *gin.Engine) {
 	r.GET("/health", controller.Health)
 	//注册用户信息
 	r.POST("/insertUser", controller.InsertUserHandle)
-
+	//OP登陆接口
+	
 }
