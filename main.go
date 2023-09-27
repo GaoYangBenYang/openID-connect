@@ -2,15 +2,19 @@ package main
 
 import (
 	"OpenIDProvider/internal/config"
+	"OpenIDProvider/internal/middleware/kafka"
 	"OpenIDProvider/internal/middleware/mysql"
 	"OpenIDProvider/internal/middleware/redis"
 	"OpenIDProvider/internal/router"
-	"log"
-	"net/http"
-	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-func init() {
+func main() {
+	//开发环境，默认开发模式
+	gin.SetMode(gin.DebugMode)
+	//默认返回一个Engine实例，其中已经附加了Logger和Recovery中间件。
+	r := gin.Default()
 	//读取配置文件
 	config.InitConfig()
 	//注册MySQL
@@ -18,35 +22,11 @@ func init() {
 	//注册Redis
 	redis.InitRedisClient()
 	//注册Kafka
-	
-	//注册中间件(访问速率限制，访问处理时间，数据校验，log)
-	
-	//注册路由
-	router.InitRouter()
-}
+	kafka.InitKafka()
+	//注册自定义中间件(访问速率限制，访问处理时间，数据校验)
 
-func main() {
+	//注册路由
+	router.InitRouter(r)
 	//监听端口
-	go func() {
-		for {
-			time.Sleep(time.Second)
-			log.Println("进行"+config.Conf.Application.Name+"服务健康检查...")
-			resp, err := http.Get("http://localhost:8000/health")
-			if err != nil {
-				log.Println("Failed:", err)
-				continue
-			}
-			resp.Body.Close()
-			if resp.StatusCode != http.StatusOK {
-				log.Println("Not OK:", resp.StatusCode)
-				continue
-			}
-			break
-		}
-		log.Println(config.Conf.Application.Name + "启动成功！正在监听" + config.Conf.Application.Port + "端口。")
-	}()
-	err := http.ListenAndServe(config.Conf.Application.Host+":"+config.Conf.Application.Port, nil)
-	if err != nil {
-		log.Println("ListenAndServe: ", err)
-	}
+	r.Run(config.Conf.Application.Host + ":" + config.Conf.Application.Port)
 }

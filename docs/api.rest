@@ -1,0 +1,22 @@
+POST    http://localhost:8000/insertUser
+
+{
+	"user_id": 5003,
+	"user_uuid": "asdasd",
+	"user_nick_name": "高洋",
+	"user_intro": "没什么好介绍的",
+	"user_school": "xxx大学",
+	"user_avatar": "asd",
+	"user_name": "高洋",
+	"user_sex": "男",
+	"user_birthday": "w",
+	"user_id_number": "asdas",
+	"user_location": "asdasd",
+	"user_telephone": "asdasd",
+	"user_password": "asdsad",
+	"user_email": "asd",
+	"user_create": "1999-01-09 16:34:48",
+	"user_edited": "1987-03-09 03:16:37",
+	"user_state": "0",
+	"user_delete": 0
+}

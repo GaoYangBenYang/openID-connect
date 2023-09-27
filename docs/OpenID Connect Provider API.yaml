@@ -10,3 +10,10 @@ paths:
       responses:
         '200':
           description: OK
+
+  /insertUser:
+    post:
+      requestBody: 
+      responses:
+        '200':
+          description: OK
