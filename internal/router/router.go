@@ -22,5 +22,5 @@ func InitRouter() {
 	})
 
 	// http.HandleFunc("/insertUser",controller.InsertUserHandle(w http.ResponseWriter, r *http.Request))
-	// http.Post("/insertUser",)
+	http.NewRequest("POST","/insertUser",)
 }

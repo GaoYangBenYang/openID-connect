@@ -20,7 +20,7 @@ func init() {
 	//注册Kafka
 	
 	//注册中间件(访问速率限制，访问处理时间，数据校验，log)
-
+	
 	//注册路由
 	router.InitRouter()
 }
