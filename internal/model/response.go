@@ -6,6 +6,8 @@ type response struct {
 	Data    interface{}
 }
 
+var Msg *response
+
 func NewResponse(code int, message string, data interface{}) *response {
 	return &response{
 		Code:    code,

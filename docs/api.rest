@@ -1,5 +1,4 @@
-POST    http://localhost:8000/insertUser
-
+POST    http://localhost:8000/v1/insertUser
 {
 	"user_id": 5004,
 	"user_uuid": "asdasd4",
@@ -19,4 +18,25 @@ POST    http://localhost:8000/insertUser
 	"user_edited": "1987-03-09 03:16:37",
 	"user_state": "0",
 	"user_delete": 0
+}
+
+###
+GET http://localhost:8000/v1/health
+
+
+###
+GET  http://localhost:8000/v1/encode_jwt
+
+###
+POST http://localhost:8000/v1/decode_jwt
+
+{
+"jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsb2NhbGhvc3Q6ODAwMCIsInN1YiI6Ik9wZW5JRFByb3ZpZGVyIiwiYXVkIjoibG9jYWxob3N0OjgwODEiLCJuYmYiOjE2OTYwNDQ1NTcsImV4cCI6MTY5NjA0NDg1NywiaWF0IjoxNjk2MDQ0NTU3LCJqdGkiOiJKV1QgSUQgMSIsInNlc3Npb25fc3RhdGUiOiJzZXNzaW9uSUQifQ.pfbmoyuQeWVzwdKyc-8aXQAskypAJSllR1bZoPkbVRk"
+}
+
+###
+POST http://localhost:8000/v1/verify_jwt
+
+{
+"jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsb2NhbGhvc3Q6ODAwMCIsInN1YiI6Ik9wZW5JRFByb3ZpZGVyIiwiYXVkIjoibG9jYWxob3N0OjgwODEiLCJuYmYiOjE2OTYwNDQ1NTcsImV4cCI6MTY5NjA0NDg1NywiaWF0IjoxNjk2MDQ0NTU3LCJqdGkiOiJKV1QgSUQgMSIsInNlc3Npb25fc3RhdGUiOiJzZXNzaW9uSUQifQ.pfbmoyuQeWVzwdKyc-8aXQAskypAJSllR1bZoPkbVRk"
 }

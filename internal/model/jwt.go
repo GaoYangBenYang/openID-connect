@@ -1,11 +1,14 @@
 package model
 
 import (
+	"OpenIDProvider/internal/config"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"log"
+	"strings"
+	"time"
 )
 
 // JWT的头部描述
@@ -16,10 +19,10 @@ type header struct {
 	Typ string `json:"typ"`
 }
 
-func NewHeader(alg, typ string) *header {
+func NewHeader() *header {
 	return &header{
-		Alg: alg,
-		Typ: typ,
+		Alg: config.Conf.JsonWebToken.HeaderAlg,
+		Typ: config.Conf.JsonWebToken.HeaderTyp,
 	}
 }
 
@@ -38,47 +41,37 @@ type payload struct {
 	Session_state string `json:"session_state"`
 }
 
-func NewPayload(iss, sub, aud string, nbf, exp, iat int, jti, session_state string) *payload {
+func NewPayload(jti, session_state string) *payload {
+	//获取当前unix时间戳
+	nowUnix := int(time.Now().Unix())
+
 	return &payload{
-		Iss:           iss,
-		Sub:           sub,
-		Aud:           aud,
-		Nbf:           nbf,
-		Exp:           exp,
-		Iat:           iat,
+		Iss:           config.Conf.JsonWebToken.PayloadIss,
+		Sub:           config.Conf.JsonWebToken.PayloadSub,
+		Aud:           config.Conf.JsonWebToken.PayloadAud,
+		Nbf:           nowUnix,
+		Exp:           nowUnix + 300,
+		Iat:           nowUnix,
 		Jti:           jti,
 		Session_state: session_state,
 	}
 }
 
-// JWT的签名
-type signature struct {
-	//对称密钥
-	Secret string `json:"secret"`
-}
-
-func NewSignature(secret string) *signature {
-	return &signature{
-		Secret: secret,
-	}
-}
-
 type JWT struct {
-	Header    *header
-	Payload   *payload
-	Signature *signature
+	Header  *header
+	Payload *payload
 }
 
 // 创建JWT对象
-func NewJWT(header *header, payload *payload, signature *signature) *JWT {
+func NewJWT(payload *payload) *JWT {
+	header := NewHeader()
 	return &JWT{
-		Header:    header,
-		Payload:   payload,
-		Signature: signature,
+		Header:  header,
+		Payload: payload,
 	}
 }
 
-// 进行JWT编码
+// JWT编码
 func (jwt *JWT) EncodeTheJWT() string {
 	//Base64URL算法进行header和payload转化字符串
 	//将数据对象JSon化
@@ -86,29 +79,75 @@ func (jwt *JWT) EncodeTheJWT() string {
 	if headerErr != nil {
 		log.Println(headerErr)
 	}
-	headerStr := base64.URLEncoding.EncodeToString(header)
+	headerStr := base64.RawURLEncoding.EncodeToString(header)
 
 	payload, payloadErr := json.Marshal(jwt.Payload)
 	if payloadErr != nil {
 		log.Println(payloadErr)
 	}
-	payloadStr := base64.URLEncoding.EncodeToString(payload)
+	payloadStr := base64.RawURLEncoding.EncodeToString(payload)
 	//将经过base64加密后的header和payload部分进行加盐sha256加密形成signature部分
-	h := hmac.New(sha256.New, []byte(jwt.Signature.Secret))
+	h := hmac.New(sha256.New, []byte(config.Conf.JsonWebToken.SignatureSecretKey))
 	h.Write([]byte(headerStr + "." + payloadStr))
-	signatureStr := base64.URLEncoding.EncodeToString(h.Sum(nil))
+	signatureStr := base64.RawURLEncoding.EncodeToString(h.Sum(nil))
+
 	//三部分组成JWT
-	token := headerStr + "." + payloadStr + "." + signatureStr
+	jwtToken := headerStr + "." + payloadStr + "." + signatureStr
 
-	return token
+	return jwtToken
 }
 
-// 进行JWT解码
-func (jwt *JWT) DecodeTheJWT() {
+// JWT解码
+func DecodeTheJWT(jwtToken string) (*JWT, string) {
+	//拆分JWTToken
+	first := strings.Index(jwtToken, ".")
+	second := strings.LastIndex(jwtToken, ".")
 
+	headerStr := jwtToken[:first]
+	payloadStr := jwtToken[first+1 : second]
+	signatureStr := jwtToken[second+1:]
+
+	//对第一部分进行base64解码
+	headerData, headerErr := base64.RawStdEncoding.DecodeString(headerStr)
+	if headerErr != nil {
+		log.Println("jwt heander 解码错误", headerErr)
+	}
+	var header *header
+	json.Unmarshal(headerData, &header)
+
+	//对第二部分(载体)进行base64解码看token是否过期
+	payloadData, payloadErr := base64.RawStdEncoding.DecodeString(payloadStr)
+	if payloadErr != nil {
+		log.Println("jwt payload 解码错误", headerErr)
+	}
+	var payload *payload
+	json.Unmarshal(payloadData, &payload)
+
+	//返回jwt对象和第三部分字符串
+	jwt := NewJWT(payload)
+
+	return jwt, signatureStr
 }
 
-// 进行JWT校验
-func (jwt *JWT) VerifyTheJWT() {
+// JWT校验
+func VerifyTheJWT(jwt *JWT, signatureStr string) (bool, string) {
+	//获取当前unix时间戳
+	timeUnix := int(time.Now().Unix())
+	//校验生效时间是否到达
+	if timeUnix < jwt.Payload.Nbf {
+		return false, "生效时间未到达"
+	}
+	//校验JWT有效时间是否过期
+	if timeUnix > jwt.Payload.Exp {
+		return false, "token已过期"
+	}
+	//对其进行编码获取第三段字符串
+	//Equal比较加密字符串
+	jwtToken := jwt.EncodeTheJWT()
+	//拆分JWTToken
+	second := strings.LastIndex(jwtToken, ".")
 
+	signatureStrTemp := jwtToken[second+1:]
+
+	return hmac.Equal([]byte(signatureStrTemp), []byte(signatureStr)), "JWT Token校验成功！"
 }

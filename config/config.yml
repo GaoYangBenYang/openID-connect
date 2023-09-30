@@ -17,12 +17,26 @@ Redis:
 
 Kafka:
 
-
-
-Log:
-
-
-OpenIDProvider:
-  
+JsonWebToken:
+  #加密算法hmac + sha256
+  header_alg: HS256
+  #类型
+  header_typ: JWT
+  #签发者
+  payload_iss: localhost:8000
+  #主题
+  payload_sub: OpenIDProvider
+  #接收者
+  payload_aud: localhost:8081
+  #生效时间
+  payload_nbf:
+  #过期时间
+  payload_exp:
+  #签发时间
+  payload_iat:
+  #编号
+  payload_jti:
+  #密钥
+  signature_secret_key: opjwt
 
 

@@ -6,7 +6,7 @@ import (
 	"OpenIDProvider/internal/middleware/mysql"
 	"OpenIDProvider/internal/middleware/redis"
 	"OpenIDProvider/internal/router"
-
+	_ "OpenIDProvider/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
