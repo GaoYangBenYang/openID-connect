@@ -2,11 +2,13 @@ package router
 
 import (
 	"OpenIDProvider/internal/controller"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func InitRouter(r *gin.Engine) {
+	r.LoadHTMLGlob("internal/static/*")
 	v1 := r.Group("/v1")
 	{
 		//健康检查路由
@@ -19,6 +21,14 @@ func InitRouter(r *gin.Engine) {
 		v1.POST("/decode_jwt", controller.DecodeTheJWT)
 		//验证jwt token
 		v1.POST("/verify_jwt", controller.VerifyTheJWT)
+		//登陆页面
+		v1.GET("/login", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "login.html", nil)
+		})
+		//登陆接口
+		v1.POST("/submit-login", func(c *gin.Context) {
+			c.JSON(200, "成功")
+		})
 	}
 
 	// RP准备用于鉴权请求的参数

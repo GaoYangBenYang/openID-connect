@@ -49,7 +49,7 @@ func VerifyTheJWT(c *gin.Context) {
 	}
 	jwt, signatureStr := model.DecodeTheJWT(jwt_token.JWTToken)
 	//验证
-	flag,logStr:= model.VerifyTheJWT(jwt, signatureStr)
+	flag, logStr := model.VerifyTheJWT(jwt, signatureStr)
 	if flag {
 		model.Msg = model.NewResponse(http.StatusOK, logStr, flag)
 	} else {

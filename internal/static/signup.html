@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>登录页面</title>
+    <title>注册页面</title>
     <style>
         body {
-            background: linear-gradient(to right, #ff9966, #ff5e62);
+            background: linear-gradient(to right, #36d1dc, #5b86e5);
             height: 100vh;
             margin: 0;
             background-size: cover;
             background-position: center;
         }
-        .login {
+        .register {
             width: 100%;
             max-width: 400px;
             padding: 40px;
@@ -19,12 +19,12 @@
     </style>
 </head>
 <body>
-    <div class="login">
-        <h2>登录</h2>
-        <form action="/v1/submit-login" method="POST">
+    <div class="register">
+        <h2>注册</h2>
+        <form action="/submit-register" method="POST">
             <input type="text" placeholder="用户名" name="username" required>
             <input type="password" placeholder="密码" name="password" required>
-            <button type="submit">登录</button>
+            <button type="submit">注册</button>
         </form>
     </div>
 </body>

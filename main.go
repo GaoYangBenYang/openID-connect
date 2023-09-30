@@ -5,8 +5,9 @@ import (
 	"OpenIDProvider/internal/middleware/kafka"
 	"OpenIDProvider/internal/middleware/mysql"
 	"OpenIDProvider/internal/middleware/redis"
-	"OpenIDProvider/internal/router"
 	_ "OpenIDProvider/internal/model"
+	"OpenIDProvider/internal/router"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,8 @@ func main() {
 	gin.SetMode(gin.DebugMode)
 	//默认返回一个Engine实例，其中已经附加了Logger和Recovery中间件。
 	r := gin.Default()
+	//关闭信任任何代理
+	r.SetTrustedProxies(nil)
 	//读取配置文件
 	config.InitConfig()
 	//注册MySQL
