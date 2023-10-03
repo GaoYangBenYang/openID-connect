@@ -21,7 +21,7 @@ POST    http://localhost:8000/v1/insertUser
 }
 
 ###
-GET http://localhost:8000/v1/health
+GET http://op.com:8000/v1/health
 
 
 ###

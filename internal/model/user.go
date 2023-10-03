@@ -58,3 +58,24 @@ func InsertUser(user *User) (int,error) {
 	result := mysql.MysqlDB.Create(user)
 	return int(result.RowsAffected),result.Error
 }
+
+//查询数据库是否存在userName,存在返回userID
+func SelectUserByUserName(userName string) (int,error) {
+	var user *User
+	mysql.MysqlDB.Where("user_name = ?",userName).Find(&user)
+	return user.UserID,nil
+}
+
+//根据userID查询password
+func SelectPasswordByUserID(id int) string  {
+	var user *User
+	mysql.MysqlDB.Where("user_id = ?",id).Find(&user)
+	return user.UserPassword
+}
+
+//根据id查询用户信息
+func SelectUserInfoByUserID(id int) *User  {
+	var user *User
+	mysql.MysqlDB.Where("user_id = ?",id).Find(&user)
+	return user
+}

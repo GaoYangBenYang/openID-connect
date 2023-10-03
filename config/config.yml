@@ -1,6 +1,6 @@
 Application:
   Name: OpenIDProvider
-  Host: localhost
+  Host: op.com
   Port: 8000
 
 
@@ -25,9 +25,9 @@ JsonWebToken:
   #签发者
   payload_iss: localhost:8000
   #主题
-  payload_sub: OpenIDProvider
+  payload_sub: 
   #接收者
-  payload_aud: localhost:8081
+  payload_aud: 
   #生效时间
   payload_nbf:
   #过期时间
