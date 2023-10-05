@@ -20,7 +20,7 @@ func UserPassVerify(c *gin.Context) {
 	//验证用户名是否存在
 	id, err := model.SelectUserByUserName(userName)
 	if err != nil {
-		
+
 		return
 	}
 
@@ -32,7 +32,7 @@ func UserPassVerify(c *gin.Context) {
 		c.Redirect(http.StatusSeeOther, "/v1/login")
 	}
 
-	c.SetCookie("oidc", "accecs_token", 1000, "/", "op.com", false, true)
+	c.SetCookie("oidc_login", "oidc_login", 1800, "/", "op.com", false, true)
 
 	//正确，重定向op授权接口，并设置名为oidc的cookie
 	c.Redirect(http.StatusSeeOther, "/v1/authorization?redirect_uri=http://rp.com/code_flow/oidc_op&scope=openid+profile+email+address+phone&response_type=code&nonce=cdYrYNLv6wBHlBmZjWxvrQmmD&state=DJOfvYDSDxaPzOKRoyaTaQWCoWywdeKU&client_id=EqAfEpR492It")
@@ -52,7 +52,11 @@ func UserInfo(c *gin.Context) {
 	log.Println(access_token)
 
 	//解析token
-	jwt, _ := utils.DecodeTheJWT(access_token)
+	jwt, err := utils.DecodeTheJWT(access_token)
+	if err != nil {
+		c.JSON(http.StatusOK, err)
+		return
+	}
 	//字符串转int
 	id, _ := strconv.Atoi(jwt.Payload.Sub)
 

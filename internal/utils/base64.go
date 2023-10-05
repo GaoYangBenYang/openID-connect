@@ -9,6 +9,8 @@ import (
 func Base64StdEncoding(src interface{}) (string, error) {
 	var srcTemp []byte
 	switch srcType := src.(type) {
+	case []byte:
+		srcTemp = srcType
 	case string:
 		srcTemp = []byte(srcType)
 	default:
@@ -25,6 +27,8 @@ func Base64StdEncoding(src interface{}) (string, error) {
 func Base64URLEncoding(src interface{}) (string, error) {
 	var srcTemp []byte
 	switch srcType := src.(type) {
+	case []byte:
+		srcTemp = srcType
 	case string:
 		srcTemp = []byte(srcType)
 	default:
@@ -59,6 +63,8 @@ func Base64RawStdEncoding(src interface{}) (string, error) {
 func Base64RawURLEncoding(src interface{}) (string, error) {
 	var srcTemp []byte
 	switch srcType := src.(type) {
+	case []byte:
+		srcTemp = srcType
 	case string:
 		srcTemp = []byte(srcType)
 	default:

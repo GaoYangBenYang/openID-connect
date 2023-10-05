@@ -1,4 +1,4 @@
-package redis
+package middleware
 
 import (
 	"log"
@@ -7,17 +7,17 @@ import (
 )
 
 // 声明一个全局的rdb变量
-var redisClient *redis.Client
+var RedisClient *redis.Client
 
 // 初始化连接
-func InitRedisClient() {
-	redisClient = redis.NewClient(&redis.Options{
+func init() {
+	RedisClient = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
 
-	_, err := redisClient.Ping().Result()
+	_, err := RedisClient.Ping().Result()
 	if err != nil {
 		log.Println("Redis连接失败!", err)
 	} else {

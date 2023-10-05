@@ -1,7 +1,6 @@
-package mysql
+package middleware
 
 import (
-	"OpenIDProvider/internal/middleware/config"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -11,10 +10,10 @@ import (
 
 // 声明一个全局的MySQL变量
 var MysqlDB *gorm.DB
-
-func InitMySQLClient() {
+//注册MySQL
+func init() {
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN: config.Conf.MySQL.UserName + ":" + config.Conf.MySQL.Password + "@tcp(" + config.Conf.MySQL.Address + ")/" + config.Conf.MySQL.DBName + "?charset=utf8&parseTime=True&loc=Local", // DSN data source name
+		DSN: Config.MySQL.UserName + ":" + Config.MySQL.Password + "@tcp(" + Config.MySQL.Address + ")/" + Config.MySQL.DBName + "?charset=utf8&parseTime=True&loc=Local", // DSN data source name
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, // 使用单数表名

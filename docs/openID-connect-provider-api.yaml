@@ -3,17 +3,21 @@ info:
   title: OpenID Connect Provider API
   version: '1.0'
 servers:
-  - url: http://localhost:8000
+  - url: http://op.com:8000/v1
+tags:
+  - name: asd
+  
 paths:
   /health:
     get:
+      description: "健康检查路由"
       responses:
         '200':
           description: OK
-
-  /insertUser:
-    post:
-      requestBody: 
+  /authorization:
+    get:
+      description: ''
+      parameters: []
       responses:
         '200':
           description: OK

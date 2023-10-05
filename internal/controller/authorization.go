@@ -17,7 +17,7 @@ func Authorization(c *gin.Context) {
 	// fmt.Println(c.Query("state"))
 	//没有携带cookie,则重定位到登陆页面进行登陆
 	// 读取cookie,根据cookie名读取
-	cookie, err := c.Cookie("oidc")
+	cookie, err := c.Cookie("oidc_login")
 	if err != nil {
 		// 直接返回cookie值
 		c.Redirect(http.StatusSeeOther, "/v1/login")

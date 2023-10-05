@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"encoding/base64"
 	"net/http"
 )
 
@@ -15,8 +14,7 @@ func BearerAuth(r *http.Request) (access_token string, ok bool) {
 	if len(auth) < len(prefix) {
 		return "", false
 	}
-
-	c, err := base64.StdEncoding.DecodeString(auth[len(prefix):])
+	c, err := Base64RawURLDecoding(auth[len(prefix):])
 	if err != nil {
 		return "", false
 	}

@@ -1,8 +1,7 @@
 package model
 
 import (
-
-	"OpenIDProvider/internal/middleware/mysql"
+	"OpenIDProvider/internal/middleware"
 )
 
 /*
@@ -30,7 +29,7 @@ type User struct {
 	UserDelete    int    `json:"user_delete" db:"user_delete"`       // 逻辑删除:0=未删除,1=已删除
 }
 
-func NewUser(userID int,userUUID,userNickName,userIntro,userSchool,userAvatar,userName,userSex,userBirthday,userIDNumber,userLocation,userTelephone,userPassword,userEmail,userCreate,userEdited,userState string,userDelete int) *User {
+func NewUser(userID int, userUUID, userNickName, userIntro, userSchool, userAvatar, userName, userSex, userBirthday, userIDNumber, userLocation, userTelephone, userPassword, userEmail, userCreate, userEdited, userState string, userDelete int) *User {
 	return &User{
 		UserID:        userID,
 		UserUUID:      userUUID,
@@ -53,29 +52,29 @@ func NewUser(userID int,userUUID,userNickName,userIntro,userSchool,userAvatar,us
 	}
 }
 
-//插入单挑数据
-func InsertUser(user *User) (int,error) {
-	result := mysql.MysqlDB.Create(user)
-	return int(result.RowsAffected),result.Error
+// 插入单挑数据
+func InsertUser(user *User) (int, error) {
+	result := middleware.MysqlDB.Create(user)
+	return int(result.RowsAffected), result.Error
 }
 
-//查询数据库是否存在userName,存在返回userID
-func SelectUserByUserName(userName string) (int,error) {
+// 查询数据库是否存在userName,存在返回userID
+func SelectUserByUserName(userName string) (int, error) {
 	var user *User
-	mysql.MysqlDB.Where("user_name = ?",userName).Find(&user)
-	return user.UserID,nil
+	middleware.MysqlDB.Where("user_name = ?", userName).Find(&user)
+	return user.UserID, nil
 }
 
-//根据userID查询password
-func SelectPasswordByUserID(id int) string  {
+// 根据userID查询password
+func SelectPasswordByUserID(id int) string {
 	var user *User
-	mysql.MysqlDB.Where("user_id = ?",id).Find(&user)
+	middleware.MysqlDB.Where("user_id = ?", id).Find(&user)
 	return user.UserPassword
 }
 
-//根据id查询用户信息
-func SelectUserInfoByUserID(id int) *User  {
+// 根据id查询用户信息
+func SelectUserInfoByUserID(id int) *User {
 	var user *User
-	mysql.MysqlDB.Where("user_id = ?",id).Find(&user)
+	middleware.MysqlDB.Where("user_id = ?", id).Find(&user)
 	return user
 }

@@ -8,16 +8,20 @@ import (
 )
 
 func InitRouter(r *gin.Engine) {
+	//静态资源
 	r.LoadHTMLGlob("internal/static/*")
-	//健康检查路由
-	r.GET("/health", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, "openID connect provider service is working.")
-	})
 	v1 := r.Group("/v1")
 	{
+		//健康检查路由
+		v1.GET("/health", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, "openID connect provider service is working.")
+		})
 		//3、GET op.com/authorization：授权接口（Authorization Endpoint），需实现：
-		//（1）接收并校验RP在查询参数中传入的redirect_uri、scope、response_type、client_id、state、nonce。如果校验失败，返回OIDC规定的错误响应。（本例将这个带有查询参数的完整URI称为authz_uri，后面会用到它）
-		//（2）检查用户是否已在OP登录（检查名为oidc的cookie）。如果未登录，则重定向到OP登录页面GET op.com/login.html?authz_uri=...（在查询参数中传入authz_uri）；如果已登录，则执行授权逻辑，将授权码等回传参数与RP提供的redirect_uri组装成完整URI，通过浏览器重定向，即返回：
+		//（1）接收并校验RP在查询参数中传入的redirect_uri、scope、response_type、client_id、state、nonce。如果校验失败，返回OIDC规定的错误响应。
+		// （本例将这个带有查询参数的完整URI称为authz_uri，后面会用到它）
+		//（2）检查用户是否已在OP登录（检查名为oidc的cookie）。
+		// 如果未登录，则重定向到OP登录页面GET op.com/login.html?authz_uri=...（在查询参数中传入authz_uri）；
+		// 如果已登录，则执行授权逻辑，将授权码等回传参数与RP提供的redirect_uri组装成完整URI，通过浏览器重定向，即返回：
 		// HTTP/1.1 303 See Other
 		// Location: http://rp.com/code_flow/oidc_op
 		// ?state=DJOfvYDSDxaPzOKRoyaTaQWCoWywdeKU

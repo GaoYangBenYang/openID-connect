@@ -44,8 +44,8 @@ func Token(c *gin.Context) {
 	var access_id_token = struct {
 		State       string `json:"state"`
 		Scope       string `json:"scope"`
-		TokenType   string `json:"access_token"`
-		AccessToken string `json:"token_type"`
+		TokenType   string `json:"token_type"`
+		AccessToken string `json:"access_token"`
 		IdToken     string `json:"id_token"`
 	}{
 		State:       "DJOfvYDSDxaPzOKRoyaTaQWCoWywdeKU",
