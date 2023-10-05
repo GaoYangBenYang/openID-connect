@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	"OpenIDProvider/internal/config"
+	"OpenIDProvider/internal/middleware/config"
 	"log"
 
 	"gorm.io/driver/mysql"

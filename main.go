@@ -1,8 +1,8 @@
 package main
 
 import (
-	"OpenIDProvider/internal/config"
 	"OpenIDProvider/internal/middleware"
+	"OpenIDProvider/internal/middleware/config"
 	"OpenIDProvider/internal/middleware/kafka"
 	"OpenIDProvider/internal/middleware/mysql"
 	"OpenIDProvider/internal/middleware/redis"
