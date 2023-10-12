@@ -1,12 +1,10 @@
 package model
 
 type response struct {
-	Code    int
-	Message string
-	Data    interface{}
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
-
-var Msg *response
 
 func NewResponse(code int, message string, data interface{}) *response {
 	return &response{

@@ -7,8 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Registration(c *gin.Context) {
+type client struct {
+	ClientId     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+}
 
-	msg := model.NewResponse(http.StatusOK, "用户注册成功", nil)
+func Registration(c *gin.Context) {
+	//cnAuY29tOnJwand0
+	client := client{
+		ClientId:     "rp.com",
+		ClientSecret: "rpjwt",
+	}
+	msg := model.NewResponse(http.StatusOK, "客户端注册成功!", client)
 	c.JSON(msg.Code, msg)
 }

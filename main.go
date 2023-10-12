@@ -18,7 +18,7 @@ func main() {
 	//注册跨域中间件
 	r.Use(middleware.Cors())
 	//注册路由
-	router.InitRouter(r)
+	router.SingleSignOnRouter(r)
 	//监听端口
 	r.Run(middleware.Config.Application.Host + ":" + middleware.Config.Application.Port)
 }

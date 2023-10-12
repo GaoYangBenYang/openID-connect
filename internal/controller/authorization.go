@@ -1,28 +1,39 @@
 package controller
 
 import (
+	"OpenIDProvider/internal/utils"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Authorization(c *gin.Context) {
-	//获取参数
-	// fmt.Println(c.Query("redirect_uri"))
-	// fmt.Println(c.Query("client_id"))
-	// fmt.Println(c.Query("scope"))
-	// fmt.Println(c.Query("response_type"))
-	// fmt.Println(c.Query("nonce"))
-	// fmt.Println(c.Query("state"))
-	//没有携带cookie,则重定位到登陆页面进行登陆
-	// 读取cookie,根据cookie名读取
-	cookie, err := c.Cookie("oidc_login")
+func Authorize(c *gin.Context) {
+	//根据cookie名读取，读取cookie,没有携带cookie,则重定位到OP登陆页面进行登陆
+	cookie, err := c.Cookie("oidc")
 	if err != nil {
-		// 直接返回cookie值
-		c.Redirect(http.StatusSeeOther, "/v1/login")
+		c.Redirect(http.StatusSeeOther, "/login")
 		return
 	}
-	fmt.Println(cookie)
-	c.Redirect(http.StatusSeeOther, "http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgxLw==&scope=openid+sub&code=Z0FBQUFBQmVjc2ExRTJvZmpGN1FNTERzV0NQOUVieHRHZUdLdUd5V0dvZUMzTzliS3hjeUVpVUpxN21GWWhhaTlvalVyblVOVXI2XzJVZG1vZlctNkRNZlpTanpFM2hVSzdKaWliSDUxX1RhcW5pUk9ScTRMNW1icUh6WlJGamxIWkJhbmFnakhxbUdTenJpZVowQ3dEbDh5c3Z1ZDBpOWFGSXBtMHBRSk1IUFdPTVBxUmtzUnEzVHFCWDlYMDhXUkItWXVWczkwT0Fjb1M1bktIalZCUUdSd2p3b2lnUGZYazhEODdYekhnRTJVdzZjRkR3U01SUT0%3D&iss=http%3A%2F%2Fop.com&client_id=EqAfEpR492It")
+	fmt.Println("cookie: ", cookie)
+	//获取请求参数 重组重定向URI
+	redirect_uri := c.Query("redirect_uri")
+	client_id := c.Query("client_id")
+	response_type := c.Query("response_type")
+	scope := c.Query("scope")
+	state := c.Query("state")
+	nonce := c.Query("nonce")
+
+	var authz_uri string
+	//根据response_type判断使用什么模式进行授权
+	if response_type == "code" {
+		code, err := utils.Base64RawStdEncoding("cheshicode")
+		if err != nil {
+			return
+		}
+
+		authz_uri = redirect_uri + "?state=" + state + "&scope=" + scope + "&client_id=" + client_id + "&code=" + code + "&nonce" + nonce
+	}
+	fmt.Println("authz_uri: ", authz_uri)
+	c.Redirect(http.StatusFound, authz_uri)
 }

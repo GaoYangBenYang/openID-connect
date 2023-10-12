@@ -43,7 +43,7 @@ func NewPayload(iss, sub, aud string, jti, session_state string) *Payload {
 		Sub:           sub,
 		Aud:           aud,
 		Nbf:           nowUnix,
-		Exp:           nowUnix + 1800,
+		Exp:           nowUnix + 60,
 		Iat:           nowUnix,
 		Jti:           jti,
 		Session_state: session_state,
