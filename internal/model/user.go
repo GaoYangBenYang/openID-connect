@@ -78,3 +78,10 @@ func SelectUserInfoByUserID(id int) *User {
 	middleware.MysqlDB.Where("user_id = ?", id).Find(&user)
 	return user
 }
+
+// 根据用户输入的电话或者邮箱查询数据库是否存在user,存在返回userID,不存在返回error
+func SelectUserByTelephoneOrEmail(account string) (int, error) {
+	var user *User
+	middleware.MysqlDB.Where("user_telephone = ? or user_email = ?", account, account).Find(&user)
+	return user.UserID, nil
+}

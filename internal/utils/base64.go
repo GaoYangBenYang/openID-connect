@@ -5,6 +5,11 @@ import (
 	"encoding/json"
 )
 
+/*
+base64编码结果中会有+、/、=三个特殊字符，它们在url中属于特殊字符是直接无法传递的；
+base64url其实就是把字符中的'+'和'/'分别替换成'-'和'_'，另外把末尾填充的‘=’去掉;其他都一样。
+*/
+
 // base64填充标准编码
 func Base64StdEncoding(src interface{}) (string, error) {
 	var srcTemp []byte
