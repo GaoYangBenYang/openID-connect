@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>openID-connect-provider</title>
+    <style>
+      body {
+        background: linear-gradient(to right, #ff9966, #ff5e62);
+        height: 100vh;
+        margin: 0;
+        background-size: cover;
+        background-position: center;
+      }
+      .login {
+        width: 100%;
+        max-width: 400px;
+        padding: 40px;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login">
+      <h2>登录</h2>
+      <form action="/v1/account_verify" method="POST">
+        <input type="text" placeholder="用户名" name="account" required />
+        <input type="password" placeholder="密码" name="password" required />
+        <input type="hidden" name="authz_uri" value={{ .authz_uri }} required />
+        <button type="submit">登录</button>
+      </form>
+    </div>
+  </body>
+</html>

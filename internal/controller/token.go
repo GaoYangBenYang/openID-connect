@@ -33,7 +33,7 @@ func Token(c *gin.Context) {
 
 	if err := c.BindJSON(&postJson); err != nil {
 		// 返回错误信息
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "参数异常", "error": err.Error()})
 		return
 	}
 	log.Println(postJson)
@@ -59,6 +59,5 @@ func Token(c *gin.Context) {
 		IdToken:     id_token,
 		State:       postJson.State,
 	}
-	msg := model.NewResponse(http.StatusOK, "JWT Token解码成功!", access_id_token)
-	c.JSON(msg.Code, msg)
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "JWT Token解码成功", "data": access_id_token})
 }

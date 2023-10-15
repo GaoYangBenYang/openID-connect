@@ -22,6 +22,5 @@ func InsertUserHandle(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "用户注册失败")
 		return
 	}
-	msg := model.NewResponse(http.StatusOK, "用户注册成功", nil)
-	c.JSON(msg.Code, msg)
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "用户注册成功", "data": nil})
 }

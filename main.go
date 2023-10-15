@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// gin.H{"code": http.StatusCreated, "message": "", "data": }
 func main() {
 	//开发环境，默认开发模式
 	gin.SetMode(gin.DebugMode)

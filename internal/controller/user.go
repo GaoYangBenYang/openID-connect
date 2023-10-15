@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"OpenIDProvider/internal/middleware"
 	"OpenIDProvider/internal/model"
 	"OpenIDProvider/internal/utils"
 	"log"
@@ -11,14 +12,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgx%26response_type=code%26scope=openid%20profile%26client_id=cnAuY29t%26nonce=cdYrYNLv6wBHlBmZjWxvrQmmD
+// http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgx&response_type=code&scope=openid%20profile&client_id=cnAuY29t&nonce=cdYrYNLv6wBHlBmZjWxvrQmmD
+// http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgx
 func AccountVerify(c *gin.Context) {
 	//获取参数
 	account := c.PostForm("account")
 	password := c.PostForm("password")
+	authz_uri := c.PostForm("authz_uri")
 	//根据账号验证数据库是否存在用户
 	id, err := model.SelectUserByTelephoneOrEmail(account)
 	if err != nil {
-		c.JSON(http.StatusNotFound, model.NewResponse(http.StatusNotFound, "account不存在!", nil))
+		c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "account不存在", "data": nil})
 		return
 	}
 	//根据id查询密码
@@ -26,13 +31,24 @@ func AccountVerify(c *gin.Context) {
 	//身份验证正确，重定向授权接口
 	if strings.EqualFold(password, passwordSQL) {
 		//用户身份验证成功设置cookie
-		c.SetCookie("oidc_account_verify", "true", 60, "/", "op.com", false, true)
-		//正确，重定向op授权接口，并设置名为oidc的cookie
-		c.Redirect(http.StatusSeeOther, "/v1/authorize?redirect_uri=http://rp.com:8081/code_flow/oidc_op&scope=openid+profile+email+address+phone&response_type=code&nonce=cdYrYNLv6wBHlBmZjWxvrQmmD&state=DJOfvYDSDxaPzOKRoyaTaQWCoWywdeKU&client_id=EqAfEpR492It")
-		return
+		cookieKey := "account_verify"
+		cookieValue := "true"
+		//存储cookie
+		if err := middleware.SetString(middleware.OIDC+":"+middleware.COOKIE+":"+cookieKey, cookieValue, 0); err != nil {
+			c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "cookie缓存失败", "data": err.Error()})
+			return
+		} else {
+			//正确，重定向op授权接口，并设置名为oidc的cookie
+			c.SetCookie(cookieKey, cookieValue, 1800, "/", "op.com", false, true)
+			c.Redirect(http.StatusSeeOther, authz_uri)
+			return
+		}
 	}
+	//对authz_uri进行转义处理 不然两次重定向后又会出现uri截断
+	//func Replace(要替换的整个字符串, 要替换的字符串, 替换成什么字符串, 要替换的次数，-1，那么就会将字符串 s 中的所有的 old 替换成 new。) string
+	authz_uri = strings.Replace(authz_uri, "&", "%26", -1)
 	//身份验证错误，重定向登陆页面
-	c.Redirect(http.StatusSeeOther, "/login")
+	c.Redirect(http.StatusSeeOther, "/login?authz_uri="+authz_uri)
 }
 
 func UserInfo(c *gin.Context) {

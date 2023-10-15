@@ -12,7 +12,8 @@ func SingleSignOnRouter(r *gin.Engine) {
 	r.LoadHTMLGlob("internal/static/*")
 	//登陆页面
 	r.GET("/login", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "login.html", nil)
+		authz_uri := c.Query("authz_uri")
+		c.HTML(http.StatusOK, "login.tmpl", gin.H{"authz_uri": authz_uri})
 	})
 	v1 := r.Group("/v1")
 	{
