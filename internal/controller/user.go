@@ -4,7 +4,7 @@ import (
 	"OpenIDProvider/internal/middleware"
 	"OpenIDProvider/internal/model"
 	"OpenIDProvider/internal/utils"
-	"log"
+
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,9 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgx%26response_type=code%26scope=openid%20profile%26client_id=cnAuY29t%26nonce=cdYrYNLv6wBHlBmZjWxvrQmmD
-// http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgx&response_type=code&scope=openid%20profile&client_id=cnAuY29t&nonce=cdYrYNLv6wBHlBmZjWxvrQmmD
-// http://rp.com:8081/code_flow/oidc_op?state=aHR0cDovL3JwLmNvbTo4MDgx
 func AccountVerify(c *gin.Context) {
 	//获取参数
 	account := c.PostForm("account")
@@ -34,13 +31,13 @@ func AccountVerify(c *gin.Context) {
 		cookieKey := "account_verify"
 		cookieValue := "true"
 		//存储cookie
-		if err := middleware.SetString(middleware.OIDC+":"+middleware.COOKIE+":"+cookieKey, cookieValue, 0); err != nil {
-			c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "cookie缓存失败", "data": err.Error()})
+		if err := middleware.SetString(middleware.OIDC+":"+middleware.COOKIE+":"+cookieKey, cookieValue, 60*10); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"code": http.StatusOK, "message": "cookie缓存失败", "data": err.Error()})
 			return
 		} else {
 			//正确，重定向op授权接口，并设置名为oidc的cookie
-			c.SetCookie(cookieKey, cookieValue, 1800, "/", "op.com", false, true)
-			c.Redirect(http.StatusSeeOther, authz_uri)
+			c.SetCookie(cookieKey, cookieValue, 30, "/", "op.com", false, true)
+			c.Redirect(http.StatusSeeOther, "/v1/authorize?redirect_uri="+authz_uri)
 			return
 		}
 	}
@@ -59,7 +56,6 @@ func UserInfo(c *gin.Context) {
 		c.JSON(http.StatusNonAuthoritativeInfo, "Unauthorized 请添加Bearer认证")
 		return
 	}
-	log.Println(access_token)
 	//解析token
 	jwt, err := utils.DecodeTheJWT(access_token)
 	if err != nil {
@@ -70,5 +66,5 @@ func UserInfo(c *gin.Context) {
 	id, _ := strconv.Atoi(jwt.Payload.Sub)
 	//（2）如果校验通过，返回用户详细信息。
 	userInfo := model.SelectUserInfoByUserID(id)
-	c.JSON(http.StatusOK, userInfo)
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "用户信息", "data": userInfo})
 }

@@ -14,7 +14,7 @@ func BearerAuth(r *http.Request) (access_token string, ok bool) {
 	if len(auth) < len(prefix) {
 		return "", false
 	}
-	c, err := Base64RawURLDecoding(auth[len(prefix):])
+	c, err := Base64StdDecoding(auth[len(prefix):])
 	if err != nil {
 		return "", false
 	}

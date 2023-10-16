@@ -13,6 +13,7 @@ const (
 	OIDC         string = "oidc"
 	CLIENT       string = "client"
 	COOKIE       string = "cookie"
+	CODE       string = "code"
 	ACCESS_TOKEN string = "access_token"
 )
 
@@ -43,11 +44,15 @@ expiration：过期时间 0 不设置过期时间 单位ms
 func SetString(key, value string, expiration time.Duration) error {
 	// 判断key是否存在
 	if RedisClient.Exists(key).Val() == 1 {
-		return errors.New("key已存在")
+		return errors.New(key + "已存在")
 	}
 	//存储
-	if RedisClient.Set(key, value, expiration*1000*1000).Val() == "OK" {
+	if RedisClient.Set(key, value, time.Duration(expiration)*time.Second).Val() == "OK" {
 		return nil
 	}
-	return errors.New("缓存失败")
+	return errors.New(key + "缓存失败")
+}
+
+func GetString(key string) string {
+	return RedisClient.Get(key).Val()
 }

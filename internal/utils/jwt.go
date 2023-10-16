@@ -58,7 +58,7 @@ func DecodeTheJWT(json_web_token string) (*model.JWT, error) {
 	json.Unmarshal(payloadData, &payload)
 
 	//获取当前unix时间戳
-	timeUnix := int(time.Now().Unix())
+	timeUnix := time.Now().Unix()
 	//校验生效时间是否到达
 	if timeUnix < payload.Nbf {
 		return nil, errors.New("JWT生效时间未到达")
