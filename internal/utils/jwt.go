@@ -12,7 +12,7 @@ import (
 )
 
 // JWT编码
-func EncodeTheJWT(jwt *model.JWT) (string, error) {
+func EncodeTheJWT(jwt *model.JsonWebToken) (string, error) {
 	//Base64URL算法进行header和payload转化字符串
 	headerStr, headerErr := Base64RawURLEncoding(jwt.Header)
 	if headerErr != nil {
@@ -33,7 +33,7 @@ func EncodeTheJWT(jwt *model.JWT) (string, error) {
 }
 
 // JWT解码
-func DecodeTheJWT(json_web_token string) (*model.JWT, error) {
+func DecodeTheJWT(json_web_token string) (*model.JsonWebToken, error) {
 	//拆分json_web_token
 	first := strings.Index(json_web_token, ".")
 	second := strings.LastIndex(json_web_token, ".")
@@ -59,17 +59,13 @@ func DecodeTheJWT(json_web_token string) (*model.JWT, error) {
 
 	//获取当前unix时间戳
 	timeUnix := time.Now().Unix()
-	//校验生效时间是否到达
-	if timeUnix < payload.Nbf {
-		return nil, errors.New("JWT生效时间未到达")
-	}
 	//校验JWT有效时间是否过期
 	if timeUnix > payload.Exp {
 		return nil, errors.New("JWT已过期")
 	}
 
 	//解析JWT对象
-	jwt := model.NewJWT(header, payload)
+	jwt := model.NewJsonWebToken(header, payload)
 
 	//对解析出来的JWT对象进行编码并进行JWT校验
 	jwtStr, jwtErr := EncodeTheJWT(jwt)

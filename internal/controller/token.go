@@ -5,6 +5,7 @@ import (
 	"OpenIDProvider/internal/model"
 	"OpenIDProvider/internal/utils"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,8 +19,7 @@ func Token(c *gin.Context) {
 		return
 	}
 	// 验证缓存中是否有client_id, client_secret
-	value := middleware.GetString(middleware.OIDC + ":" + middleware.CLIENT + ":" + client_id)
-	if value == "" {
+	if value := middleware.GetString(middleware.OIDC + ":" + middleware.CLIENT + ":" + client_id); value == "" {
 		c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "client_id不存在", "data": nil})
 		return
 	} else if value != client_secret {
@@ -32,30 +32,33 @@ func Token(c *gin.Context) {
 		GrantType   string `json:"grant_type"`
 		RedirectURI string `json:"redirect_uri"`
 		Code        string `json:"code"`
+		Scope       string `json:"scope"`
 		Nonce       string `json:"nonce"`
 	}{}
 	if err := c.ShouldBindJSON(&postForm); err != nil {
 		// 返回错误信息
-		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "invalid_request", "data": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "token 请求参数异常", "data": err.Error()})
 		return
 	}
 	// 对code进行验证
-	// log.Println("postForm: ", postForm)
-	if true {
+	if value := middleware.GetString(middleware.OIDC + ":" + middleware.CODE + ":" + client_id + postForm.RedirectURI); strings.EqualFold(value, postForm.Code) {
 		//（3）如果都校验通过，则生成access token、id token并返回。
 		//生成access token
-		access_token := utils.RandomAccessToken()
+		header := model.NewHeader("HS256", "JWT")
+		accessTokenPayload := model.NewAccessTokenPayload("op.com", "1", client_id, "jwt001", postForm.Nonce, postForm.Scope)
+		access_token, _ := utils.EncodeTheJWT(model.NewJsonWebToken(header, accessTokenPayload))
+		// base64编码
+		access_token2base64, _ := utils.Base64StdEncoding(access_token)
+
 		//缓存access_token  client_id:code:
-		if err := middleware.SetString(middleware.OIDC+":"+middleware.ACCESS_TOKEN+":"+client_id+postForm.Code, access_token, 60*30); err != nil {
+		if err := middleware.SetString(middleware.OIDC+":"+middleware.ACCESS_TOKEN+":"+client_id+postForm.Code, access_token2base64, 60*30); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "access_token缓存失败", "data": err.Error()})
 			return
 		}
 		//生成id token
-		header := model.NewHeader("HS256", "JWT")
-		payload := model.NewPayload("op.com", "1", "rp.com", "jwt001", postForm.Nonce)
-		id_token, _ := utils.EncodeTheJWT(model.NewJWT(header, payload))
-		// fmt.Println("idtoken: ", id_token)
-		// fmt.Println(utils.Base64StdEncoding(id_token))
+		payload := model.NewIdTokenPayload("op.com", "1", client_id, "jwt001", postForm.Nonce, postForm.Scope)
+
+		id_token, _ := utils.EncodeTheJWT(model.NewJsonWebToken(header, payload))
 
 		var tokenResponse = struct {
 			AccessToken string `json:"access_token"`
@@ -64,7 +67,7 @@ func Token(c *gin.Context) {
 			// ExpiresIn   string `json:"expires_in"`
 			IdToken string `json:"id_token"`
 		}{
-			AccessToken: access_token,
+			AccessToken: access_token2base64,
 			TokenType:   "Bearer",
 			IdToken:     id_token,
 		}

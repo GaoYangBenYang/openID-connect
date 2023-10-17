@@ -37,6 +37,8 @@ func AccountVerify(c *gin.Context) {
 		} else {
 			//正确，重定向op授权接口，并设置名为oidc的cookie
 			c.SetCookie(cookieKey, cookieValue, 30, "/", "op.com", false, true)
+			// 截取相关参数
+			authz_uri = strings.Replace(authz_uri, "?", "&", -1)
 			c.Redirect(http.StatusSeeOther, "/v1/authorize?redirect_uri="+authz_uri)
 			return
 		}
@@ -44,6 +46,8 @@ func AccountVerify(c *gin.Context) {
 	//对authz_uri进行转义处理 不然两次重定向后又会出现uri截断
 	//func Replace(要替换的整个字符串, 要替换的字符串, 替换成什么字符串, 要替换的次数，-1，那么就会将字符串 s 中的所有的 old 替换成 new。) string
 	authz_uri = strings.Replace(authz_uri, "&", "%26", -1)
+	authz_uri = strings.Replace(authz_uri, "?", "%3F", -1)
+	authz_uri = strings.Replace(authz_uri, "=", "%3D", -1)
 	//身份验证错误，重定向登陆页面
 	c.Redirect(http.StatusSeeOther, "/login?authz_uri="+authz_uri)
 }
@@ -56,7 +60,8 @@ func UserInfo(c *gin.Context) {
 		c.JSON(http.StatusNonAuthoritativeInfo, "Unauthorized 请添加Bearer认证")
 		return
 	}
-	//解析token
+	//验证access_token
+
 	jwt, err := utils.DecodeTheJWT(access_token)
 	if err != nil {
 		c.JSON(http.StatusOK, err)

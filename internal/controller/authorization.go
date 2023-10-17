@@ -30,8 +30,9 @@ func Authorize(c *gin.Context) {
 	redirect_uri := c.Query("redirect_uri")
 	nonce := c.Query("nonce")
 	//TODO检验参数
-	authz_uri := redirect_uri + "%3Fstate=" + state + "%26response_type=" + response_type + "%26scope=" + scope + "%26client_id=" + client_id + "%26nonce=" + nonce
-	//读取cookie,没有携带cookie,或者//TODO缓存中不存在cookie 则重定向到OP登录页面GET op.com/login.html?authz_uri=...（在查询参数中传入authz_uri）
+	authz_uri := redirect_uri + "?state=" + state + "%26response_type=" + response_type + "%26scope=" + scope + "%26client_id=" + client_id + "%26nonce=" + nonce
+	//读取cookie,没有携带cookie,
+	//TODO缓存中不存在cookie 则重定向到OP登录页面GET op.com/login.html?authz_uri=...（在查询参数中传入authz_uri）
 	cookie, err := c.Cookie("account_verify")
 	if err != nil {
 		c.Redirect(http.StatusSeeOther, "/login?authz_uri="+authz_uri)
@@ -60,7 +61,7 @@ func Authorize(c *gin.Context) {
 				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "code缓存失败", "data": err.Error()})
 				return
 			}
-			authz_uri = redirect_uri + "?state=" + state + "&code=" + code + "&nonce=" + nonce
+			authz_uri = redirect_uri + "?state=" + state + "%26code=" + code + "%26nonce=" + nonce + "%26scope=" + scope
 		}
 		c.Redirect(http.StatusFound, authz_uri)
 		return
