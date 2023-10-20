@@ -17,7 +17,7 @@ func main() {
 	//注册自定义中间件(访问速率限制，访问处理时间，数据校验)
 	//注册跨域中间件
 	r.Use(middleware.Cors())
-	//注册路由
+	// 注册路由
 	router.SingleSignOnRouter(r)
 	//监听端口
 	r.Run(middleware.Config.Application.Host + ":" + middleware.Config.Application.Port)
