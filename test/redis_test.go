@@ -1,6 +1,8 @@
 package test
 
 import (
+	"OpenIDProvider/internal/model"
+	"OpenIDProvider/internal/utils"
 	"fmt"
 	"testing"
 )
@@ -80,4 +82,11 @@ func FindListNode(head *ListNode, i int) int {
 		index++
 	}
 	return -1
+}
+
+func TestMain(t *testing.T)  {
+	header := model.NewHeader("HS256", "JWT")
+	accessTokenPayload := model.NewAccessTokenPayload("op.com", "1", "client_id", "jwt001", "Nonce", "Scope")
+	access_token, _ := utils.EncodeTheJWT(model.NewJsonWebToken(header, accessTokenPayload))
+	fmt.Println(access_token)
 }

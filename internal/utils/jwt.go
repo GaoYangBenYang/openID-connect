@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"OpenIDProvider/internal/middleware"
 	"OpenIDProvider/internal/model"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -23,7 +22,7 @@ func EncodeTheJWT(jwt *model.JsonWebToken) (string, error) {
 		return "", errors.New("对JWT Payload进行编码时发生错误")
 	}
 	//将经过base64加密后的header和payload部分进行加盐sha256加密形成signature部分
-	h := hmac.New(sha256.New, []byte(middleware.Config.JsonWebToken.SignatureSecretKey))
+	h := hmac.New(sha256.New, []byte("oidc-salt"))
 	h.Write([]byte(headerStr + "." + payloadStr))
 	signatureStr, signatureErr := Base64RawURLEncoding(h.Sum(nil))
 	if signatureErr != nil {
